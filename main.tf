@@ -1,5 +1,5 @@
 provider "azurerm" {
-  version = "~>2.0"
+  version = "~>2.19"
   features {}
 }
 
@@ -10,19 +10,27 @@ module "naming" {
 }
 
 resource "azurerm_key_vault_access_policy" "storage" {
-  key_vault_id       = var.key_vault_id
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = var.storage_account.identity.0.principal_id
-  key_permissions    = var.storage_key_permissions
-  secret_permissions = []
+  key_vault_id        = var.key_vault_id
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  object_id           = var.storage_account.identity.0.principal_id
+  key_permissions     = var.storage_key_permissions
+  secret_permissions  = []
+  storage_permissions = var.storage_storage_permissions
 }
 
 resource "azurerm_key_vault_access_policy" "client" {
-  key_vault_id       = var.key_vault_id
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = data.azurerm_client_config.current.object_id
-  key_permissions    = var.client_key_permissions
-  secret_permissions = []
+  key_vault_id        = var.key_vault_id
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  object_id           = data.azurerm_client_config.current.object_id
+  key_permissions     = var.client_key_permissions
+  secret_permissions  = []
+  storage_permissions = var.client_storage_permissions
+}
+
+resource "azurerm_role_assignment" "role_assignment" {
+  scope                = var.storage_account.id
+  role_definition_name = "Storage Account Key Operator Service Role"
+  principal_id         = var.key_vault_object_id
 }
 
 resource "azurerm_key_vault_key" "storage_key" {
@@ -35,6 +43,7 @@ resource "azurerm_key_vault_key" "storage_key" {
   depends_on = [
     azurerm_key_vault_access_policy.client,
     azurerm_key_vault_access_policy.storage,
+    azurerm_role_assignment.role_assignment,
   ]
 }
 

@@ -42,7 +42,7 @@ variable "client_storage_permissions" {
   type        = list(string)
   description = "A list of client storage permissions associated with the newly generated key."
   #Provide these permissions by default to allow for the creation of a new managed encryption key by key vault
-  default = ["backup", "delete", "deletesas", "get", "getsas", "list", "listsas", "purge", "set", "setsas", "update"]
+  default = ["backup", "delete", "deletesas", "get", "getsas", "list", "listsas", "purge", "recover", "regeneratekey", "restore", "set", "setsas", "update"]
 }
 
 variable "storage_key_permissions" {
@@ -56,14 +56,14 @@ variable "storage_secret_permissions" {
   type        = list(string)
   description = "A list of storage key permissions associated with the newly generated key."
   #Provide these permissions by default to allow for the creation of a new managed encryption key by key vault
-  default =  []
+  default = []
 }
 
 variable "storage_storage_permissions" {
   type        = list(string)
   description = "A list of storage storage permissions associated with the newly generated key."
   #Provide these permissions by default to allow for the creation of a new managed encryption key by key vault
-  default = ["backup", "delete", "deletesas", "get", "getsas", "list", "listsas", "purge", "set", "setsas", "update"]
+  default = ["backup", "delete", "deletesas", "get", "getsas", "list", "listsas", "purge", "recover", "regeneratekey", "restore", "set", "setsas", "update"]
 }
 
 variable "key_type" {
@@ -82,4 +82,10 @@ variable "key_options" {
   type        = list(string)
   description = "The key options of the key that Azure Key Vault will generate."
   default     = []
+}
+
+variable "key_vault_object_id" {
+  type        = string
+  description = "The AAD object ID used by Azure Key Vault. See: https://docs.microsoft.com/en-us/azure/key-vault/secrets/overview-storage-keys#service-principal-application-id"
+  default     = "93c27d83-f79b-4cb2-8dd4-4aa716542e74" # For Azure Government use cdf90028-ceee-4d20-b0a3-f1c4ac357e66
 }
