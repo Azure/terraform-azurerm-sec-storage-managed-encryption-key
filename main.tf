@@ -28,9 +28,10 @@ resource "azurerm_key_vault_access_policy" "client" {
 }
 
 resource "azurerm_role_assignment" "role_assignment" {
-  scope                = var.storage_account.id
-  role_definition_name = "Storage Account Key Operator Service Role"
-  principal_id         = var.key_vault_object_id
+  scope                            = var.storage_account.id
+  role_definition_name             = "Storage Account Key Operator Service Role"
+  principal_id                     = var.key_vault_object_id
+  skip_service_principal_aad_check = true
 }
 
 resource "azurerm_key_vault_key" "storage_key" {
